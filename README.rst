@@ -1,11 +1,11 @@
 Usage
 -----
 
-For example of locustfile.py:
+locustfile.py for example:
 
 .. code:: python
 
-    from mqtt_locust import LocustMqttClient
+    from locust_mqtt import LocustMqttClient
 
     class MqttLocust(Locust):
         def __init__(self, *args, **kwargs):
@@ -22,22 +22,21 @@ For example of locustfile.py:
                 self.client.connect_async(self.host, 1883)
                 self.client.loop_start()
             except Exception as e:
-                fire_locust_failure(
-                    request_type=REQUEST_TYPE,
+                events.request_failure.fire(
+                    request_type='MQTT',
                     name='connect',
-                    response_time=time_delta(start_time, time.time()),
-                    exception=ConnectError("Could not connect to host:[" + self.host + "]")
+                    response_time=int(start_time - time.time()) * 1000,
+                    exception=e
                 )
 
 
-    class FloDeviceBehavior(TaskSet):
+    class ThineBehavior(TaskSet):
         @task
         def publish_with_qos0(self) -> None:
-            thing: Thing = Thing.random()
             topic: str = '#'
             name: str = 'publish:qos0:{}'.format(topic)
             self.client.publish(topic,
-                                payload=thing.json(),
+                                payload=json.dumps({ 'id': '0' }),
                                 qos=0,
                                 name=name,
                                 timeout=10000)
@@ -46,26 +45,7 @@ For example of locustfile.py:
             time.sleep(5)
 
 
-    @dataclass
-    class Thing:
-        device_id: str
-
-        @classmethod
-        def random(cls):
-            return cls(
-                id = ''.join(map(lambda x: "%02x" % x, [0x00, 0x16, 0x3e,
-                          random.randint(0x00, 0x7f),
-                          random.randint(0x00, 0xff),
-                          random.randint(0x00, 0xff)]))
-            )
-
-        def json(self) -> str:
-            return json.dumps({
-                'id': self.id
-            })
-
-
-    class FloDeviceLocust(MqttLocust):
+    class ThineLocust(MqttLocust):
         task_set: TaskSet = ThingBehavior
 
 
@@ -80,7 +60,7 @@ Installation
 
     python3 -m venv .venv && . .venv/bin/activate
     pip install locust
-    pip install git+git://github.com/yongjhih/locust-mqtt.git
+    pip install git+git://github.com/yongjhih/locust_mqtt.git
 
 Stack
 -----
