@@ -18,7 +18,7 @@ class MqttLocust(Locust):
         self.client.connect()
 
 
-class ThineBehavior(TaskSet):
+class ThingBehavior(TaskSet):
     @task
     def publish_with_qos0(self) -> None:
         topic: str = '#'
@@ -33,5 +33,5 @@ class ThineBehavior(TaskSet):
         time.sleep(5)
 
 
-class ThineLocust(MqttLocust):
+class ThingLocust(MqttLocust):
     task_set: TaskSet = ThingBehavior
