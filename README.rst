@@ -1,3 +1,7 @@
+.. image:: https://travis-ci.org/yongjhih/locust_mqtt.svg?branch=master
+    :target: https://travis-ci.org/yongjhih/locust_mqtt
+    :alt: Build Status
+
 Usage
 -----
 
