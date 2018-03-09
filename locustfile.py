@@ -15,19 +15,7 @@ class MqttLocust(Locust):
 
         self.client: LocustMqttClient = LocustMqttClient()
         start_time: float = time.time()
-
-        try:
-            # It is important to do an asynchronous connect, given that we will have
-            # multiple connections happening in a single server during a Locust test
-            self.client.connect_async(self.host, 1883)
-            self.client.loop_start()
-        except Exception as e:
-            events.request_failure.fire(
-                request_type='MQTT',
-                name='connect',
-                response_time=int(start_time - time.time()) * 1000,
-                exception=e
-            )
+        self.client.connect()
 
 
 class ThineBehavior(TaskSet):

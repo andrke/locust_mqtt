@@ -240,3 +240,16 @@ class LocustMqttClient(mqtt.Client):
         )
         self.reconnect()
 
+    def connect(self, host: str = 'localhost', port: int = 1883):
+        start_time: float = time.time()
+        try:
+            self.connect_async(host, port)
+            self.loop_start()
+        except Exception as e:
+            events.request_failure.fire(
+                request_type='MQTT',
+                name='connect',
+                response_time=int(start_time - time.time()) * 1000,
+                exception=e
+            )
+
