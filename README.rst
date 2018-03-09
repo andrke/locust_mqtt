@@ -16,8 +16,6 @@ locustfile.py for example:
     class MqttLocust(Locust):
         def __init__(self, *args, **kwargs):
             super(Locust, self).__init__(*args, **kwargs)
-            if not self.host:
-                self.host: str = "localhost"
 
             self.client: LocustMqttClient = LocustMqttClient()
             self.client.connect()

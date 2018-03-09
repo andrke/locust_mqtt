@@ -10,9 +10,6 @@ from locust_mqtt import LocustMqttClient
 class MqttLocust(Locust):
     def __init__(self, *args, **kwargs):
         super(Locust, self).__init__(*args, **kwargs)
-        if not self.host:
-            self.host: str = "localhost"
-
         self.client: LocustMqttClient = LocustMqttClient()
         start_time: float = time.time()
         self.client.connect()
