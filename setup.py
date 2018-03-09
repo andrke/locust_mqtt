@@ -25,7 +25,7 @@ setup(
     # There are some restrictions on what makes a valid project name
     # specification here:
     # https://packaging.python.org/specifications/core-metadata/#name
-    name='locust-mqtt',  # Required
+    name='locust_mqtt',  # Required
 
     # Versions should comply with PEP 440:
     # https://www.python.org/dev/peps/pep-0440/
@@ -54,7 +54,7 @@ setup(
     #
     # This field corresponds to the "Home-Page" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#home-page-optional
-    url='https://github.com/yongjhih/locust-mqtt',  # Optional
+    url='https://github.com/yongjhih/locust_mqtt',  # Optional
 
     # This should be your name or the name of the organization which owns the
     # project.
@@ -166,8 +166,8 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={  # Optional
-        'Bug Reports': 'https://github.com/yongjhih/locust-mqtt/issues',
+        'Bug Reports': 'https://github.com/yongjhih/locust_mqtt/issues',
         'Say Thanks!': 'http://saythanks.io/to/yongjhih',
-        'Source': 'https://github.com/yongjhih/locust-mqtt',
+        'Source': 'https://github.com/yongjhih/locust_mqtt',
     },
 )
