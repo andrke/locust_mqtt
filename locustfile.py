@@ -12,7 +12,7 @@ class MqttLocust(Locust):
         super(Locust, self).__init__(*args, **kwargs)
         self.client: LocustMqttClient = LocustMqttClient()
         start_time: float = time.time()
-        self.client.connect()
+        self.client.locust_connect()
 
 
 class ThingBehavior(TaskSet):

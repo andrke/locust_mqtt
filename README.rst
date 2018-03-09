@@ -18,7 +18,7 @@ locustfile.py for example:
             super(Locust, self).__init__(*args, **kwargs)
 
             self.client: LocustMqttClient = LocustMqttClient()
-            self.client.connect()
+            self.client.locust_connect()
 
 
     class ThingBehavior(TaskSet):

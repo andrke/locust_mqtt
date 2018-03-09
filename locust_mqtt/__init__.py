@@ -240,7 +240,7 @@ class LocustMqttClient(mqtt.Client):
         )
         self.reconnect()
 
-    def connect(self, host: str = 'localhost', port: int = 1883):
+    def locust_connect(self, host: str = 'localhost', port: int = 1883):
         start_time: float = time.time()
         try:
             self.connect_async(host, port)
