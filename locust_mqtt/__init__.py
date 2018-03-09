@@ -69,8 +69,8 @@ class LocustMqttClient(mqtt.Client):
 
     def tls_set(self,
                 ca_certs,
-                certfile: str = None,
-                keyfile: str = None,
+                certfile: Optional[str] = None,
+                keyfile: Optional[str] = None,
                 cert_reqs=ssl.CERT_REQUIRED,
                 tls_version=ssl.PROTOCOL_TLSv1_2,
                 ciphers=None):
@@ -90,7 +90,7 @@ class LocustMqttClient(mqtt.Client):
                 exception=e)
 
     # retry is not used at the time since this implementation only supports QoS 0
-    def publish(self, topic: str, payload: str = None, qos: int = 0, retry: int = 5, name: str = 'publish',
+    def publish(self, topic: str, payload: Optional[str] = None, qos: int = 0, retry: int = 5, name: str = 'publish',
                 **kwargs) -> None:
         timeout: int = kwargs.pop('timeout', 10000)
         start_time: float = time.time()
