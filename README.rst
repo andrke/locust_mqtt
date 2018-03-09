@@ -1,6 +1,8 @@
 .. image:: https://travis-ci.org/yongjhih/locust_mqtt.svg?branch=master
     :target: https://travis-ci.org/yongjhih/locust_mqtt
     :alt: Build Status
+.. image:: https://codecov.io/gh/yongjhih/locust_mqtt/branch/master/graph/badge.svg
+  :target: https://codecov.io/gh/yongjhih/locust_mqtt
 
 Usage
 -----

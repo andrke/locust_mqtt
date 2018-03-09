@@ -3,6 +3,9 @@ language: python
 python:
  - "3.6"
 
-install: pip install -e .
+install: pip install -e . pytest pytest-cov codecov
 
-script: pytest
+script: pytest --cov=./
+
+after_success:
+ - codecov
