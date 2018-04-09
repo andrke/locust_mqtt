@@ -49,9 +49,7 @@ Installation
 
 .. code:: sh
 
-    python3 -m venv .venv && . .venv/bin/activate
-    pip install locust
-    pip install git+git://github.com/yongjhih/locust_mqtt.git
+    pipenv install 'git+git://github.com/yongjhih/locust_mqtt.git@0.0.1#egg=locust_mqtt'
 
 Stack
 -----
