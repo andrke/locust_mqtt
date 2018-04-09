@@ -11,6 +11,43 @@ REQUEST_TYPE: str = 'MQTT'
 MESSAGE_TYPE_PUB: str = 'PUB'
 MESSAGE_TYPE_SUB: str = 'SUB'
 
+def error_message(error: int) -> str:
+  if error == mqtt.MQTT_ERR_AGAIN:
+    return "MQTT_ERR_AGAIN"
+  if error == mqtt.MQTT_ERR_SUCCESS:
+    return "MQTT_ERR_SUCCESS"
+  if error == mqtt.MQTT_ERR_NOMEM:
+    return "MQTT_ERR_NOMEM"
+  if error == mqtt.MQTT_ERR_PROTOCOL:
+    return "MQTT_ERR_PROTOCOL"
+  if error == mqtt.MQTT_ERR_INVAL:
+    return "MQTT_ERR_INVAL"
+  if error == mqtt.MQTT_ERR_NO_CONN:
+    return "MQTT_ERR_NO_CONN"
+  if error == mqtt.MQTT_ERR_CONN_REFUSED:
+    return "MQTT_ERR_CONN_REFUSED"
+  if error == mqtt.MQTT_ERR_NOT_FOUND:
+    return "MQTT_ERR_NOT_FOUND"
+  if error == mqtt.MQTT_ERR_CONN_LOST:
+    return "MQTT_ERR_CONN_LOST"
+  if error == mqtt.MQTT_ERR_TLS:
+    return "MQTT_ERR_TLS"
+  if error == mqtt.MQTT_ERR_PAYLOAD_SIZE:
+    return "MQTT_ERR_PAYLOAD_SIZE"
+  if error == mqtt.MQTT_ERR_NOT_SUPPORTED:
+    return "MQTT_ERR_NOT_SUPPORTED"
+  if error == mqtt.MQTT_ERR_AUTH:
+    return "MQTT_ERR_AUTH"
+  if error == mqtt.MQTT_ERR_ACL_DENIED:
+    return "MQTT_ERR_ACL_DENIED"
+  if error == mqtt.MQTT_ERR_UNKNOWN:
+    return "MQTT_ERR_UNKNOWN"
+  if error == mqtt.MQTT_ERR_ERRNO:
+    return "MQTT_ERR_ERRNO"
+  if error == mqtt.MQTT_ERR_QUEUE_SIZE:
+    return "MQTT_ERR_QUEUE_SIZE"
+  return str(error)
+
 
 def time_delta(t1: float, t2: float) -> int:
     return int((t2 - t1) * 1000)
@@ -51,7 +88,7 @@ class Message(object):
         self.name = name
 
     def timed_out(self, total_time: int) -> bool:
-        return self.timeout and total_time > self.timeout
+        return bool(self.timeout) and total_time > self.timeout
 
 
 class LocustMqttClient(mqtt.Client):
@@ -110,10 +147,10 @@ class LocustMqttClient(mqtt.Client):
                     request_type=REQUEST_TYPE,
                     name=name,
                     response_time=time_delta(start_time, time.time()),
-                    exception=ValueError(err)
+                    exception=ValueError(error_message(err))
                 )
 
-                print("publish: err,mid:[" + str(err) + "," + str(mid) + "]")
+                print("publish: err,mid:[" + error_message(err) + "," + str(mid) + "]")
             self.pubmmap[mid] = Message(
                 MESSAGE_TYPE_PUB, qos, topic, payload, start_time, timeout, name
             )
@@ -139,8 +176,8 @@ class LocustMqttClient(mqtt.Client):
                 MESSAGE_TYPE_SUB, qos, topic, "", start_time, timeout, name
             )
             if err:
-                raise ValueError(err)
-                print("Subscribed to topic with err:[" + str(err) + "]messageId:[" + str(mid) + "]")
+                raise ValueError(error_message(err))
+                print("Subscribed to topic with err:[" + error_message(err) + "]messageId:[" + str(mid) + "]")
         except Exception as e:
             total_time: int = time_delta(start_time, time.time())
             fire_locust_failure(
