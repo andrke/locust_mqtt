@@ -124,7 +124,9 @@ class LocustMqttClient(mqtt.Client):
                 request_type=REQUEST_TYPE,
                 name='tls_set',
                 response_time=time_delta(start_time, time.time()),
-                exception=e)
+                exception=e,
+                response_length=0
+            )
 
     # retry is not used at the time since this implementation only supports QoS 0
     def publish(self, topic: str, payload: Optional[str] = None, qos: int = 0, retry: int = 5, name: str = 'publish',
@@ -132,8 +134,8 @@ class LocustMqttClient(mqtt.Client):
         timeout: int = kwargs.pop('timeout', 10000)
         start_time: float = time.time()
         try:
-            print(topic)
-            print(payload)
+            # print(topic)
+            # print(payload)
             # (result: int, mid: int)
             # MQTT_ERR_SUCCESS to indicate success, or (MQTT_ERR_NO_CONN)
             err, mid = super(LocustMqttClient, self).publish(
@@ -147,10 +149,11 @@ class LocustMqttClient(mqtt.Client):
                     request_type=REQUEST_TYPE,
                     name=name,
                     response_time=time_delta(start_time, time.time()),
-                    exception=ValueError(error_message(err))
+                    exception=ValueError(error_message(err)),
+                    response_length = 0
                 )
 
-                print("publish: err,mid:[" + error_message(err) + "," + str(mid) + "]")
+                #print("publish: err,mid:[" + error_message(err) + "," + str(mid) + "]")
             self.pubmmap[mid] = Message(
                 MESSAGE_TYPE_PUB, qos, topic, payload, start_time, timeout, name
             )
@@ -160,8 +163,9 @@ class LocustMqttClient(mqtt.Client):
                 name=name,
                 response_time=time_delta(start_time, time.time()),
                 exception=e,
+                response_length=0
             )
-            print(str(e))
+            #print(str(e))
 
     # retry is not used at the time since this implementation only supports QoS 0
     def subscribe(self, topic: str, qos: int = 0, retry: int = 5, name: str = 'subscribe', timeout: int = 15000):
@@ -177,7 +181,7 @@ class LocustMqttClient(mqtt.Client):
             )
             if err:
                 raise ValueError(error_message(err))
-                print("Subscribed to topic with err:[" + error_message(err) + "]messageId:[" + str(mid) + "]")
+                #print("Subscribed to topic with err:[" + error_message(err) + "]messageId:[" + str(mid) + "]")
         except Exception as e:
             total_time: int = time_delta(start_time, time.time())
             fire_locust_failure(
@@ -185,8 +189,9 @@ class LocustMqttClient(mqtt.Client):
                 name=name,
                 response_time=total_time,
                 exception=e,
+                response_length=0
             )
-            print("Exception when subscribing to topic:[" + str(e) + "]")
+            #print("Exception when subscribing to topic:[" + str(e) + "]")
 
     def locust_on_connect(self, client: mqtt.Client, flags_dict, userdata, rc) -> None:
         # print("Connection returned result: "+mqtt.connack_string(rc))
@@ -223,6 +228,7 @@ class LocustMqttClient(mqtt.Client):
                 name="message_found",
                 response_time=0,
                 exception=ValueError("Published message could not be found"),
+                response_length=0
             )
             return
 
@@ -233,6 +239,7 @@ class LocustMqttClient(mqtt.Client):
                 name=message.name,
                 response_time=total_time,
                 exception=TimeoutError("publish timed out"),
+                response_length=len(message.payload),
             )
             # print("report publish failure - response_time:["+str(total_time)+"]")
         else:
@@ -248,7 +255,7 @@ class LocustMqttClient(mqtt.Client):
         end_time: float = time.time()
         message: Message = self.submmap.pop(mid, None)
         if not message:
-            print("Not found message for on_subscribe")
+            # print("Not found message for on_subscribe")
             return
         total_time: int = time_delta(message.start_time, end_time)
         if message.timed_out(total_time):
@@ -257,8 +264,9 @@ class LocustMqttClient(mqtt.Client):
                 name=message.name,
                 response_time=total_time,
                 exception=TimeoutError("subscribe timed out"),
+                response_length=len(message.payload),
             )
-            print("report subscribe failure - response_time:[" + str(total_time) + "]")
+            # print("report subscribe failure - response_time:[" + str(total_time) + "]")
         else:
             fire_locust_success(
                 request_type=REQUEST_TYPE,
@@ -266,7 +274,7 @@ class LocustMqttClient(mqtt.Client):
                 response_time=total_time,
                 response_length=0,
             )
-            print("report subscribe success - response_time:[" + str(total_time) + "]")
+            # print("report subscribe success - response_time:[" + str(total_time) + "]")
 
     def locust_on_disconnect(self, client: mqtt.Client, userdata, rc):
         fire_locust_failure(
@@ -274,6 +282,7 @@ class LocustMqttClient(mqtt.Client):
             name='disconnect',
             response_time=0,
             exception=DisconnectError("disconnected"),
+            response_length=0,
         )
         self.reconnect()
 
@@ -287,6 +296,7 @@ class LocustMqttClient(mqtt.Client):
                 request_type='MQTT',
                 name='connect',
                 response_time=int(start_time - time.time()) * 1000,
-                exception=e
+                exception=e,
+                response_length=0,
             )
 
